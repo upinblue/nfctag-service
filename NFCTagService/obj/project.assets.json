@@ -1,7 +1,7 @@
 {
   "version": 3,
   "targets": {
-    ".NETCoreApp,Version=v3.1": {
+    ".NETCoreApp,Version=v3.0": {
       "BouncyCastle.NetCore/1.8.3": {
         "type": "package",
         "dependencies": {
@@ -5770,7 +5770,7 @@
     }
   },
   "projectFileDependencyGroups": {
-    ".NETCoreApp,Version=v3.1": [
+    ".NETCoreApp,Version=v3.0": [
       "MySql.Data >= 8.0.19"
     ]
   },
@@ -5780,23 +5780,23 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/NFCTagService/NFCTagService.csproj",
+      "projectUniqueName": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/nfctag-service/NFCTagService/NFCTagService.csproj",
       "projectName": "NFCTagService",
-      "projectPath": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/NFCTagService/NFCTagService.csproj",
+      "projectPath": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/nfctag-service/NFCTagService/NFCTagService.csproj",
       "packagesPath": "/Users/dominik/.nuget/packages/",
-      "outputPath": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/NFCTagService/obj/",
+      "outputPath": "/Users/dominik/Documents/Entwicklung/uib/NFCTagService/nfctag-service/NFCTagService/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/dominik/.config/NuGet/NuGet.Config"
       ],
       "originalTargetFrameworks": [
-        "netcoreapp3.1"
+        "netcoreapp3.0"
       ],
       "sources": {
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
-        "netcoreapp3.1": {
+        "netcoreapp3.0": {
           "projectReferences": {}
         }
       },
@@ -5807,7 +5807,7 @@
       }
     },
     "frameworks": {
-      "netcoreapp3.1": {
+      "netcoreapp3.0": {
         "dependencies": {
           "MySql.Data": {
             "target": "Package",

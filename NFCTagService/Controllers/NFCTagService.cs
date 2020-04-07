@@ -13,7 +13,7 @@ using System.Net.Http;
 namespace NFCTagService.Controllers
 {
     [ApiController]
-    [Route("v1/nfc/[controller]")]
+    [Route("v1/api/NFC/[controller]")]
     [Produces("application/json")]
     public class NFCTagService : ControllerBase
     {
@@ -34,6 +34,9 @@ namespace NFCTagService.Controllers
 
             string savedURL = Request.Headers["SavedURL"];
             string applicationKey = Request.Headers["Issuer"];
+
+
+            return StatusCode(200);
 
             if (string.IsNullOrEmpty(tagID) || string.IsNullOrEmpty(applicationKey))
             {
