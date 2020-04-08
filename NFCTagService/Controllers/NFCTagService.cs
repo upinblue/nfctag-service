@@ -36,7 +36,7 @@ namespace NFCTagService.Controllers
             string tagID = Request.Headers["TagID"];
             string serial = Request.Headers["Serial"];
 
-            string savedURL = Request.Headers["SavedURL"];
+            string savedURL = Request.Headers["Value"];
             string applicationKey = Request.Headers["Issuer"];
 
 
