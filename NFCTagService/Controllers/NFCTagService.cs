@@ -13,20 +13,24 @@ using System.Net.Http;
 namespace NFCTagService.Controllers
 {
     [ApiController]
-    [Route("v1/api/NFC/[controller]")]
+    [Route("[controller]")]
     [Produces("application/json")]
+
+
     public class NFCTagService : ControllerBase
     {
 
         DatabaseController db;
         public NFCTagService() { 
-            db = new DatabaseController();      
+            db = new DatabaseController();
         }
+
+
         /* this function gets a token and check if this is valid */
         // GET api/Authentication/authenticate
         [HttpPost]
         [Route("saveTag")]
-        public async System.Threading.Tasks.Task<ActionResult<IEnumerable<string>>> sendMailAsync()
+        public async System.Threading.Tasks.Task<ActionResult<IEnumerable<string>>> saveTag()
         {
 
             string tagID = Request.Headers["TagID"];
@@ -36,8 +40,6 @@ namespace NFCTagService.Controllers
             string applicationKey = Request.Headers["Issuer"];
 
 
-            return StatusCode(200);
-
             if (string.IsNullOrEmpty(tagID) || string.IsNullOrEmpty(applicationKey))
             {
 #if DEBUG
@@ -46,6 +48,7 @@ namespace NFCTagService.Controllers
                 return StatusCode(400);
             }
 
+            
             if (!await isApplicationEntitledAsync(applicationKey))
             {
 #if DEBUG
@@ -53,7 +56,7 @@ namespace NFCTagService.Controllers
 #endif
                 return StatusCode(401);
             }
-
+            
 
             if(!db.saveTag(tagID, serial))
             {
@@ -73,7 +76,7 @@ namespace NFCTagService.Controllers
             // Create a HttpWebrequest object to the desired URL.
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
             req.Headers["token"] = applicationKey;
-            req.Headers["entitlement"] = "1";
+            req.Headers["entitlement"] = "2";
             try
             {
                 WebResponse x = await req.GetResponseAsync();
@@ -84,7 +87,7 @@ namespace NFCTagService.Controllers
             catch (WebException e)
             {
 #if DEBUG
-                Response.Headers.Add("error", "checking entitlement: " + e.Message);
+                Response.Headers.Add("entitlementerror", "checking entitlement: " + e.Message);
 #endif
                 return false;
             }
