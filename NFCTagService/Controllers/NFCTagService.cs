@@ -13,7 +13,7 @@ using System.Net.Http;
 namespace NFCTagService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("v1/api/NFC")]
     [Produces("application/json")]
 
 
@@ -59,6 +59,11 @@ namespace NFCTagService.Controllers
             
 
             if(!db.saveTag(tagID, serial))
+            {
+                return StatusCode(500);
+            }
+
+            if (!db.addFlashHistory(savedURL, serial))
             {
                 return StatusCode(500);
             }
