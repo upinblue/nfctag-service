@@ -15,8 +15,6 @@ namespace NFCTagService.Controllers
     [ApiController]
     [Route("v1/api/NFC")]
     [Produces("application/json")]
-
-
     public class NFCTagService : ControllerBase
     {
 
@@ -25,9 +23,6 @@ namespace NFCTagService.Controllers
             db = new DatabaseController();
         }
 
-
-        /* this function gets a token and check if this is valid */
-        // GET api/Authentication/authenticate
         [HttpPost]
         [Route("saveTag")]
         public async System.Threading.Tasks.Task<ActionResult<IEnumerable<string>>> saveTag()
@@ -38,7 +33,7 @@ namespace NFCTagService.Controllers
 
             string savedURL = Request.Headers["Value"];
             string applicationKey = Request.Headers["Issuer"];
-
+            string token = Request.Headers["Token"];
 
             if (string.IsNullOrEmpty(tagID) || string.IsNullOrEmpty(applicationKey))
             {
@@ -56,14 +51,31 @@ namespace NFCTagService.Controllers
 #endif
                 return StatusCode(401);
             }
-            
 
-            if(!db.saveTag(tagID, serial))
+            if (!await isUserAuthenticated(token))
+            {
+#if DEBUG
+                Response.Headers.Add("error", "permission denied");
+#endif
+                return StatusCode(401);
+            }
+
+
+            if (!db.saveTag(tagID, serial))
             {
                 return StatusCode(500);
             }
 
-            if (!db.addFlashHistory(savedURL, serial))
+            int userID = db.getUserIDBySessionToken(token);
+            if (userID == -1)
+            {
+#if DEBUG
+                Response.Headers.Add("sessionerror", "non active session");
+#endif
+                return StatusCode(500);
+            }
+
+            if (!db.addFlashHistory(savedURL, serial, userID))
             {
                 return StatusCode(500);
             }
@@ -93,6 +105,31 @@ namespace NFCTagService.Controllers
             {
 #if DEBUG
                 Response.Headers.Add("entitlementerror", "checking entitlement: " + e.Message);
+#endif
+                return false;
+            }
+        }
+
+        private async System.Threading.Tasks.Task<bool> isUserAuthenticated(string token)
+        {
+
+            System.Uri uri = new Uri("https://api.upinblue.com/v1/api/Authentication/authenticate");
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
+            // Create a HttpWebrequest object to the desired URL.
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
+            req.Headers["token"] = token;
+            try
+            {
+                WebResponse x = await req.GetResponseAsync();
+
+                x.Close();
+                return true;
+            }
+            catch (WebException e)
+            {
+#if DEBUG
+                Response.Headers.Add("sessionerror", "checking session: " + e.Message);
 #endif
                 return false;
             }

@@ -7,14 +7,18 @@ namespace NFCTagService.Controllers
     public class DatabaseController
     {
         private MySqlConnection connection;
+        private MySqlConnection connectionSK;
         public DatabaseController()
         {
 
-            
+
 
             connection = new MySqlConnection(connectionString);
-
             connection.Open();
+
+            connectionSK = new MySqlConnection(connectionStringSK);
+            connectionSK.Open();
+
         }
 
         public MySqlConnection getConnection()
@@ -60,7 +64,7 @@ namespace NFCTagService.Controllers
             }
             return success;
         }
-        public bool addFlashHistory(string version, string serial)
+        public bool addFlashHistory(string version, string serial, int userID)
         {
             bool success = false;
             if (connection.State == System.Data.ConnectionState.Open)
@@ -80,7 +84,7 @@ namespace NFCTagService.Controllers
                 cmd1.Dispose();
 
 
-                string sql = "INSERT INTO `factory`.`FlashHistory` (`Date`, `ChipID`, `SWVersion`) VALUES (NOW(), '" + id + "', '" + version + "');";
+                string sql = "INSERT INTO `factory`.`FlashHistory` (`Date`, `ChipID`, `Value`, `UserID`) VALUES (NOW(), '" + id + "', '" + version + "', '" + userID + "');";
                 MySqlCommand cmd = new MySqlCommand(sql, connection);
                 MySqlDataReader rdr = cmd.ExecuteReader();
 
@@ -89,6 +93,33 @@ namespace NFCTagService.Controllers
                 success = true;
             }
             return success;
+        }
+
+        public int getUserIDBySessionToken(string token)
+        {
+            int id = -1;
+
+            string sql = "SELECT user_id FROM directory.sessions WHERE token = '" + token + "';";
+            MySqlCommand cmd = new MySqlCommand(sql, connectionSK);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+
+            rdr.Read();
+            string userID = "";
+            if (rdr.HasRows)
+                userID = rdr[0].ToString();
+
+            rdr.Close();
+            cmd.Dispose();
+
+            try
+            {
+                id = Int32.Parse(userID);
+            } catch
+            {
+                id = -1;
+            }
+
+            return id;
         }
     }
 }
