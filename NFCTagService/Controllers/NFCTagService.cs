@@ -33,7 +33,7 @@ namespace NFCTagService.Controllers
 
             string savedURL = Request.Headers["Value"];
             string applicationKey = Request.Headers["Issuer"];
-            string token = Request.Headers["Token"];
+            string token = Request.Headers["Authorization"];
 
             if (string.IsNullOrEmpty(tagID) || string.IsNullOrEmpty(applicationKey))
             {
@@ -66,7 +66,7 @@ namespace NFCTagService.Controllers
                 return StatusCode(500);
             }
 
-            int userID = db.getUserIDBySessionToken(token);
+            int userID = db.getUserIDBySessionToken(token.Split(" ")[1]);
             if (userID == -1)
             {
 #if DEBUG
@@ -92,7 +92,7 @@ namespace NFCTagService.Controllers
 
             // Create a HttpWebrequest object to the desired URL.
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-            req.Headers["token"] = applicationKey;
+            req.Headers["Authorization"] = applicationKey;
             req.Headers["entitlement"] = "2";
             try
             {
@@ -118,7 +118,7 @@ namespace NFCTagService.Controllers
 
             // Create a HttpWebrequest object to the desired URL.
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(uri);
-            req.Headers["token"] = token;
+            req.Headers["Authorization"] = token;
             try
             {
                 WebResponse x = await req.GetResponseAsync();

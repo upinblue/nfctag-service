@@ -11,7 +11,8 @@ namespace NFCTagService.Controllers
         public DatabaseController()
         {
 
-
+            string connectionString = "Server=sql307.your-server.de;Database=factory;Uid=upinblb_8;Pwd=AYQG4UrVYQuSn98P";
+            string connectionStringSK = "Server=sql435.your-server.de;Database=directory;Uid=usr_dir_uib;Pwd=0I3gc4MR9wj7DjAQ";
 
             connection = new MySqlConnection(connectionString);
             connection.Open();
