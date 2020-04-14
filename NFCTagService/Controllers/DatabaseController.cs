@@ -108,7 +108,7 @@ namespace NFCTagService.Controllers
             {
                 result += rdr[0].ToString() + ": {";
                 result += "Type: " + rdr[1].ToString() + ",";
-                result += "SerialNumber: " + rdr[1].ToString() + ",";
+                result += "SerialNumber: " + rdr[1].ToString();
                 result += "},";
             }
            
@@ -119,6 +119,41 @@ namespace NFCTagService.Controllers
             return result;
         }
 
+        public string getHistory(string chipID)
+        {
+
+            string result = "{ history: {";
+            string sql;
+
+            int i = 0;
+            bool r = int.TryParse(chipID, out i); 
+
+            if(!r)
+            {
+                sql = "SELECT * FROM factory.FlashHistory;";
+            } else
+            {
+                sql = "SELECT * FROM factory.FlashHistory WHERE ChipID =  " + i + ";";
+            }
+
+            MySqlCommand cmd = new MySqlCommand(sql, connection);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                result += rdr[1].ToString() + ": {";
+                result += "FlashID: " + rdr[0].ToString() + ",";
+                result += "Date: " + rdr[2].ToString() + ",";
+                result += "Value: " + rdr[3].ToString() + ",";
+                result += "UserID: " + rdr[4].ToString();
+                result += "},";
+            }
+
+            result += "}";
+            rdr.Close();
+            cmd.Dispose();
+
+            return result;
+        }
         public int getUserIDBySessionToken(string token)
         {
             int id = -1;
