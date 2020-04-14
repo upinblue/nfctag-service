@@ -1,5 +1,7 @@
 ﻿using System;
 using MySql.Data.MySqlClient;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 
 namespace NFCTagService.Controllers
@@ -94,6 +96,27 @@ namespace NFCTagService.Controllers
                 success = true;
             }
             return success;
+        }
+
+        public string getChips()
+        {
+            string result = "{ chips: {";
+            string sql = "SELECT * FROM factory.Chips;";
+            MySqlCommand cmd = new MySqlCommand(sql, connection);
+            MySqlDataReader rdr = cmd.ExecuteReader();
+            while (rdr.Read())
+            {
+                result += rdr[0].ToString() + ": {";
+                result += "Type: " + rdr[1].ToString() + ",";
+                result += "SerialNumber: " + rdr[1].ToString() + ",";
+                result += "},";
+            }
+           
+            result += "}";
+            rdr.Close();
+            cmd.Dispose();
+
+            return result;
         }
 
         public int getUserIDBySessionToken(string token)

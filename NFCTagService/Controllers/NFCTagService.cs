@@ -84,6 +84,45 @@ namespace NFCTagService.Controllers
 
 
 
+        [HttpGet]
+        [Route("tags")]
+        public async System.Threading.Tasks.Task<ActionResult<IEnumerable<string>>> getTags()
+        {
+            string applicationKey = Request.Headers["Issuer"];
+            string token = Request.Headers["Authorization"];
+
+            if (string.IsNullOrEmpty(applicationKey))
+            {
+#if DEBUG
+                Response.Headers.Add("error", "empty input");
+#endif
+                return StatusCode(400);
+            }
+
+
+            if (!await isApplicationEntitledAsync(applicationKey))
+            {
+#if DEBUG
+                Response.Headers.Add("error", "permission denied");
+#endif
+                return StatusCode(401);
+            }
+
+            if (!await isUserAuthenticated(token))
+            {
+#if DEBUG
+                Response.Headers.Add("error", "permission denied");
+#endif
+                return StatusCode(401);
+            }
+
+            var result = db.getChips();
+
+            return Ok(result);
+        }
+
+
+
         private async System.Threading.Tasks.Task<bool> isApplicationEntitledAsync(string applicationKey)
         {
 
